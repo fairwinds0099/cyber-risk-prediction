@@ -1,7 +1,10 @@
+import matplotlib.pyplot
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.metrics import f1_score,roc_curve,recall_score,roc_auc_score,accuracy_score,precision_score,classification_report,confusion_matrix
+from sklearn.metrics import f1_score, roc_curve, recall_score, roc_auc_score, accuracy_score, precision_score, \
+    classification_report, confusion_matrix
+
+plt = matplotlib.pyplot
 
 
 def find_best_threshold(model, X_value, y_value, num_steps):
@@ -22,13 +25,7 @@ def find_best_threshold(model, X_value, y_value, num_steps):
 
 class DataAnalyzeActions:
 
-    def plot_data(X, y):
-        plt.scatter(X[y == 0, 0], X[y == 0, 1], label="Label #0", alpha=1, linewidth=0.15)
-        plt.scatter(X[y == 1, 0], X[y == 1, 1], label="Label #1", alpha=1, linewidth=0.15, color='red')
-        plt.legend(bbox_to_anchor=(1.05, 1))
-        return plt
-
-    def calculateScores(self, sampling, sampling_name, x:pd.DataFrame.values, y:pd.DataFrame.values):
+    def calculateScores(self, sampling, sampling_name, x: pd.DataFrame.values, y: pd.DataFrame.values):
         sampling = sampling
         sampling_name = sampling_name
         scores = []
@@ -39,6 +36,7 @@ class DataAnalyzeActions:
         score = pd.DataFrame(scores, columns=['Sampling', 'Best Threshold', 'F1 Score', 'Accuracy', 'Recall', 'Precision'])
         return score
 
+
     def adjusted_classes(self, prob, t):
         """
         This function adjusts class predictions based on the prediction threshold (t).
@@ -46,13 +44,15 @@ class DataAnalyzeActions:
         """
         return [1 if y >= t else 0 for y in prob]
 
-    def precision_recall_threshold(self, y_val, fpr, tpr, thresholds, prob, t=0.5):
+
+    def precision_recall_threshold(self, y_val, fpr, tpr, thresholds, prob):
         """
         plots the precision recall curve and shows the current value for each
         by identifying the classifier's threshold (t).
         """
         # generate new class predictions based on the adjusted_classes
         # function above and view the resulting confusion matrix.
+        t = 0.5
         y_pred_adj = self.adjusted_classes(prob, t)
         print(pd.DataFrame(confusion_matrix(y_val, y_pred_adj),
                            columns=['pred_neg', 'pred_pos'],
@@ -74,6 +74,7 @@ class DataAnalyzeActions:
         close_default_clf = np.argmin(np.abs(thresholds - t))
         plt.plot(tpr[close_default_clf], fpr[close_default_clf], '^', c='k',
                  markersize=15)
+
 
     def precision_recall_threshold_test(self, yTest, fpr, tpr, thresholds, prob, t=0.5):
         """

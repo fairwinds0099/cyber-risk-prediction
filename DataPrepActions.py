@@ -11,7 +11,6 @@ class DataPrepActions():
             y: label column
         """
 
-        global df
         df = pd.read_csv('/Users/apple4u/Desktop/goksel tez/results_with_scenarios.csv')
         df.insider_label.fillna(0, inplace=True)
         df = df.drop(columns=['employee_name', 'user_id'])
