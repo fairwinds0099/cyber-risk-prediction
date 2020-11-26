@@ -41,20 +41,20 @@ if __name__ == '__main__':
     probabilities = randomForestClassifier.predict_proba(xVldtn)[:, 1]
     print(probabilities)
 
-    # falsePositiveRates, truePositiveRates, thresholds  = roc_curve(yVldtn, probabilities) #Get the ROC Curve
-    # roc_auc_score(yVldtn, probabilities)
-    # dataAnalyzeActions.calculateScores(randomForestClassifier, 'Random Over Sampling', xVldtn, yVldtn)
-    # dataAnalyzeActions.precision_recall_threshold(yVldtn,falsePositiveRates, truePositiveRates, thresholds, probabilities)
-    # plt.figure(figsize=(8, 5))
-    # # Plot ROC curve
-    # plt.plot([0, 1], [0, 1], 'k--')
-    # plt.plot(falsePositiveRates, truePositiveRates)
-    # plt.xlabel('False Positive Rate = 1 - Specificity Score')
-    # plt.ylabel('True Positive Rate  = Recall Score')
-    # plt.title('ROC Curve for Random Under Sampling')
-    # plt.show()
-    #
-    #
-    #
-    #
+    falsePositiveRates, truePositiveRates, thresholds  = roc_curve(yVldtn, probabilities) #Get the ROC Curve
+    roc_auc_score(yVldtn, probabilities)
+    dataAnalyzeActions.calculate_scores(randomForestClassifier, 'Random Over Sampling', xVldtn, yVldtn)
+    dataAnalyzeActions.precision_recall_threshold(yVldtn,falsePositiveRates, truePositiveRates, thresholds, probabilities)
+    plt.figure(figsize=(8, 5))
+    # Plot ROC curve
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.plot(falsePositiveRates, truePositiveRates)
+    plt.xlabel('False Positive Rate = 1 - Specificity Score')
+    plt.ylabel('True Positive Rate  = Recall Score')
+    plt.title('ROC Curve for Random Under Sampling')
+    plt.show()
+
+
+
+
 
