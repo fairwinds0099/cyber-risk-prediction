@@ -3,6 +3,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import f1_score,roc_curve,recall_score,roc_auc_score,accuracy_score,precision_score,classification_report,confusion_matrix
 
+
+def find_best_threshold(model, X_value, y_value, num_steps):
+    highest_f1 = 0
+    best_threshold = 0
+    for threshold in np.linspace(0, 1, num_steps):
+        y_predict = (model.predict_proba(X_value)[:, 1] >= threshold)
+        f1 = f1_score(y_value, y_predict)
+        acc = accuracy_score(y_value, y_predict)
+        rec = recall_score(y_value, y_predict)
+        pre = precision_score(y_value, y_predict)
+        if f1 > highest_f1:
+            best_threshold, highest_f1, best_acc, best_rec, best_pre = \
+                threshold, f1, acc, rec, pre
+
+    return best_threshold, highest_f1, best_acc, best_rec, best_pre
+
+
 class DataAnalyzeActions:
 
     def plot_data(X, y):
@@ -11,38 +28,12 @@ class DataAnalyzeActions:
         plt.legend(bbox_to_anchor=(1.05, 1))
         return plt
 
-    def find_best_threshold(model, X_value, y_value, num_steps):
-        highest_f1 = 0
-        best_threshold = 0
-        for threshold in np.linspace(0, 1, num_steps):
-            y_predict = (model.predict_proba(X_value)[:, 1] >= threshold)
-            f1 = f1_score(y_value, y_predict)
-            acc = accuracy_score(y_value, y_predict)
-            rec = recall_score(y_value, y_predict)
-            pre = precision_score(y_value, y_predict)
-            if f1 > highest_f1:
-                best_threshold, highest_f1, best_acc, best_rec, best_pre = \
-                    threshold, f1, acc, rec, pre
-
-        return best_threshold, highest_f1, best_acc, best_rec, best_pre
-
-    def scores_val(self, sampling, sampling_name):
+    def calculateScores(self, sampling, sampling_name, x:pd.DataFrame.values, y:pd.DataFrame.values):
         sampling = sampling
         sampling_name = sampling_name
         scores = []
 
-        best_thresh, high_f1, high_acc, high_rec, high_pre = self.find_best_threshold(sampling, X_val, y_val, 100)
-        scores.append([sampling_name, best_thresh, high_f1, high_acc, high_rec, high_pre])
-
-        score = pd.DataFrame(scores, columns=['Sampling', 'Best Threshold', 'F1 Score', 'Accuracy', 'Recall', 'Precision'])
-        return score
-
-    def scores_test(self, sampling, sampling_name):
-        sampling = sampling
-        sampling_name = sampling_name
-        scores = []
-
-        best_thresh, high_f1, high_acc, high_rec, high_pre = self.find_best_threshold(sampling, X_test, y_test, 100)
+        best_thresh, high_f1, high_acc, high_rec, high_pre = find_best_threshold(sampling, x, y, 100)
         scores.append([sampling_name, best_thresh, high_f1, high_acc, high_rec, high_pre])
 
         score = pd.DataFrame(scores, columns=['Sampling', 'Best Threshold', 'F1 Score', 'Accuracy', 'Recall', 'Precision'])

@@ -1,6 +1,6 @@
 import pandas as pd
 
-class DataPrepActions:
+class DataPrepActions():
 
     def fetchAndCleanDataframe(self):
         """

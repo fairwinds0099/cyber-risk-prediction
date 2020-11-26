@@ -41,8 +41,8 @@ if __name__ == '__main__':
     probabilities = randomForestClassifier.predict_proba(xVldtn)[:, 1]
     falsePositiveRates, truePositiveRates, thresholds  = roc_curve(yVldtn, probabilities) #Get the ROC Curve
     roc_auc_score(yVldtn, probabilities)
-    dataAnalyzeActions.scores_val(randomOverSampler, 'Random Over Sampling')
-    dataAnalyzeActions.precision_recall_threshold(falsePositiveRates, truePositiveRates, thresholds, t=0.2424)
+    dataAnalyzeActions.calculateScores(randomForestClassifier, 'Random Over Sampling', xVldtn, yVldtn)
+    dataAnalyzeActions.precision_recall_threshold(yVldtn,falsePositiveRates, truePositiveRates, thresholds, probabilities, t=0.2424)
     plt.figure(figsize=(8, 5))
     # Plot ROC curve
     plt.plot([0, 1], [0, 1], 'k--')
