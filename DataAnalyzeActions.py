@@ -5,16 +5,6 @@ from sklearn.metrics import f1_score,roc_curve,recall_score,roc_auc_score,accura
 
 class DataAnalyzeActions:
 
-    def prep_data(self, df: pd.DataFrame) -> (np.ndarray, np.ndarray):
-        """
-        Convert the DataFrame into two variable
-        X: data columns (O - N)
-        y: lable column
-        """
-        X = df.iloc[:, :5].values
-        y = df.label.values
-        return X, y
-
     def plot_data(X, y):
         plt.scatter(X[y == 0, 0], X[y == 0, 1], label="Label #0", alpha=1, linewidth=0.15)
         plt.scatter(X[y == 1, 0], X[y == 1, 1], label="Label #1", alpha=1, linewidth=0.15, color='red')
@@ -36,45 +26,43 @@ class DataAnalyzeActions:
 
         return best_threshold, highest_f1, best_acc, best_rec, best_pre
 
-    def scores_val(sampling, sampling_name):
+    def scores_val(self, sampling, sampling_name):
         sampling = sampling
         sampling_name = sampling_name
         scores = []
 
-        best_thresh, high_f1, high_acc, high_rec, high_pre = find_best_threshold(sampling, X_val, y_val, 100)
+        best_thresh, high_f1, high_acc, high_rec, high_pre = self.find_best_threshold(sampling, X_val, y_val, 100)
         scores.append([sampling_name, best_thresh, high_f1, high_acc, high_rec, high_pre])
 
         score = pd.DataFrame(scores, columns=['Sampling', 'Best Threshold', 'F1 Score', 'Accuracy', 'Recall', 'Precision'])
         return score
 
-    def scores_test(sampling, sampling_name):
+    def scores_test(self, sampling, sampling_name):
         sampling = sampling
         sampling_name = sampling_name
         scores = []
 
-        best_thresh, high_f1, high_acc, high_rec, high_pre = find_best_threshold(sampling, X_test, y_test, 100)
+        best_thresh, high_f1, high_acc, high_rec, high_pre = self.find_best_threshold(sampling, X_test, y_test, 100)
         scores.append([sampling_name, best_thresh, high_f1, high_acc, high_rec, high_pre])
 
         score = pd.DataFrame(scores, columns=['Sampling', 'Best Threshold', 'F1 Score', 'Accuracy', 'Recall', 'Precision'])
         return score
 
-    def adjusted_classes(prob, t):
+    def adjusted_classes(self, prob, t):
         """
         This function adjusts class predictions based on the prediction threshold (t).
         Will only work for binary classification problems.
         """
         return [1 if y >= t else 0 for y in prob]
 
-
-    def precision_recall_threshold(fpr, tpr, thresholds, t=0.5):
+    def precision_recall_threshold(self, y_val, fpr, tpr, thresholds, prob, t=0.5):
         """
         plots the precision recall curve and shows the current value for each
         by identifying the classifier's threshold (t).
         """
-
         # generate new class predictions based on the adjusted_classes
         # function above and view the resulting confusion matrix.
-        y_pred_adj = adjusted_classes(prob, t)
+        y_pred_adj = self.adjusted_classes(prob, t)
         print(pd.DataFrame(confusion_matrix(y_val, y_pred_adj),
                            columns=['pred_neg', 'pred_pos'],
                            index=['neg', 'pos']))
@@ -96,7 +84,7 @@ class DataAnalyzeActions:
         plt.plot(tpr[close_default_clf], fpr[close_default_clf], '^', c='k',
                  markersize=15)
 
-    def precision_recall_threshold_test(fpr, tpr, thresholds, t=0.5):
+    def precision_recall_threshold_test(self, yTest, fpr, tpr, thresholds, prob, t=0.5):
         """
         plots the precision recall curve and shows the current value for each
         by identifying the classifier's threshold (t).
@@ -104,8 +92,8 @@ class DataAnalyzeActions:
 
         # generate new class predictions based on the adjusted_classes
         # function above and view the resulting confusion matrix.
-        y_pred_adj = adjusted_classes(prob, t)
-        print(pd.DataFrame(confusion_matrix(y_test, y_pred_adj),
+        y_pred_adj = self.adjusted_classes(prob, t)
+        print(pd.DataFrame(confusion_matrix(yTest, y_pred_adj),
                            columns=['pred_neg', 'pred_pos'],
                            index=['neg', 'pos']))
 
@@ -125,7 +113,3 @@ class DataAnalyzeActions:
         close_default_clf = np.argmin(np.abs(thresholds - t))
         plt.plot(tpr[close_default_clf], fpr[close_default_clf], '^', c='k',
                  markersize=15)
-
-
-def prep_data(df):
-    return None
